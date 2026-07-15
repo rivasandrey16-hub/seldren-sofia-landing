@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SELDREN — Sofía · Recepcionista de IA para clínicas odontológicas</title>
+<meta name="description" content="Sofía atiende el WhatsApp de tu clínica 24/7, agenda en tu calendario y recupera pacientes inactivos. Responde en menos de 10 segundos. Se paga sola con 2 citas al mes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050608;
+    --panel:rgba(10,13,17,.78);
+    --panel-solid:#0B0E12;
+    --line:rgba(120,140,160,.16);
+    --text:#EDEFF2;
+    --muted:#98A2AE;
+    --cyan:#6FD6E8;       /* acento Seldren AI */
+    --teal:#3FC1B0;
+    --gold:#D9B36B;       /* dinero */
+    --red:#E06C6C;
+    --wa:#25D366;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ============ VIDEO FIJO DE FONDO ============ */
+  .bg-video{
+    position:fixed;inset:0;z-index:-2;
+    width:100vw;height:100vh;object-fit:cover;
+    filter:brightness(.85);
+  }
+  .bg-overlay{
+    position:fixed;inset:0;z-index:-1;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(111,214,232,.06), transparent 55%),
+      linear-gradient(180deg, rgba(5,6,8,.55) 0%, rgba(5,6,8,.35) 40%, rgba(5,6,8,.62) 100%);
+  }
+
+  /* ============ TIPOGRAFÍA BASE ============ */
+  .mono{font-family:'JetBrains Mono',monospace}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:500;
+    letter-spacing:.28em;text-transform:uppercase;color:var(--cyan);
+  }
+  h1,h2{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-.02em}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  section{padding:110px 0}
+
+  /* ============ NAVBAR ============ */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    backdrop-filter:blur(12px);background:rgba(5,6,8,.6);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:.3em;text-transform:uppercase}
+  .logo span{color:var(--cyan)}
+  .nav-links{display:flex;gap:22px;align-items:center}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:500;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.85rem;
+    color:#04110B;background:var(--wa);border:none;border-radius:10px;
+    padding:11px 20px;text-decoration:none;cursor:pointer;
+    transition:transform .18s, box-shadow .18s;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.3)}
+  .btn.small{padding:9px 16px;font-size:.78rem}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--cyan);box-shadow:none;color:var(--cyan)}
+  @media(max-width:760px){.nav-links a:not(.btn){display:none}}
+
+  /* ============ HERO ============ */
+  .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-top:120px;padding-bottom:80px}
+  .hero .eyebrow{margin-bottom:20px}
+  .hero h1{
+    font-size:clamp(2.5rem,6.4vw,4.6rem);line-height:1.04;max-width:820px;
+  }
+  .hero h1 em{font-style:normal;color:var(--cyan)}
+  .hero p{
+    margin-top:24px;font-size:1.02rem;color:var(--muted);max-width:560px;line-height:1.65;
+  }
+  .hero p b{color:var(--text)}
+  .hero-ctas{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
+
+  /* franja de specs técnicas — tipografía de la referencia */
+  .specs{
+    margin-top:76px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    display:grid;grid-template-columns:repeat(4,1fr);
+  }
+  .spec{padding:20px 18px;border-right:1px solid var(--line)}
+  .spec:last-child{border-right:none}
+  .spec .k{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .spec .v{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.25rem;margin-top:8px}
+  .spec .v i{font-style:normal;color:var(--cyan)}
+  @media(max-width:760px){.specs{grid-template-columns:1fr 1fr}.spec:nth-child(2){border-right:none}}
+
+  /* ============ PANELES DE CONTENIDO ============ */
+  .panel{
+    background:var(--panel);backdrop-filter:blur(10px);
+    border:1px solid var(--line);border-radius:18px;padding:32px;
+  }
+  .sec-head{margin-bottom:44px;max-width:640px}
+  .sec-head h2{font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.12;margin-top:14px}
+  .sec-head h2 em{font-style:normal;color:var(--cyan)}
+  .sec-head p{margin-top:14px;color:var(--muted);font-size:.93rem;line-height:1.65}
+
+  .tag-est{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+  .tag-dato{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:#04110B;background:var(--cyan);border-radius:999px;padding:3px 10px;font-weight:600}
+
+  /* ============ PROBLEMA ============ */
+  .fugas{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .fuga{background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:8px}
+  .fuga .n{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red)}
+  .fuga .big{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.1rem}
+  .fuga .big em{font-style:normal;font-size:.45em;color:var(--muted);font-weight:500}
+  .fuga .t{font-weight:600;font-size:.92rem}
+  .fuga .d{color:var(--muted);font-size:.79rem;line-height:1.55}
+  @media(max-width:860px){.fugas{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.fugas{grid-template-columns:1fr}}
+
+  /* ============ SOLUCIÓN / MÓDULOS ============ */
+  .mods{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .mod{background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:22px;transition:border-color .25s,transform .25s}
+  .mod:hover{border-color:var(--cyan);transform:translateY(-3px)}
+  .mod .wf{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.18em;color:var(--cyan);border:1px solid rgba(111,214,232,.3);border-radius:6px;padding:3px 8px;display:inline-block}
+  .mod .name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;margin-top:12px}
+  .mod .freq{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--gold);margin-top:4px;letter-spacing:.06em}
+  .mod .d{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
+  @media(max-width:860px){.mods{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.mods{grid-template-columns:1fr}}
+
+  /* ============ DEMO ============ */
+  .demo-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:start}
+  @media(max-width:860px){.demo-grid{grid-template-columns:1fr}}
+  .demo-video{
+    width:100%;aspect-ratio:9/16;max-height:560px;border-radius:16px;
+    border:1px solid var(--line);background:#000;object-fit:cover;display:block;margin:0 auto;
+  }
+  .lat-rows{display:flex;flex-direction:column;gap:0;margin-top:6px}
+  .lat{display:grid;grid-template-columns:1fr auto;gap:12px;padding:15px 0;border-bottom:1px solid var(--line);align-items:center}
+  .lat .l{font-size:.85rem;color:var(--muted)}
+  .lat .l b{color:var(--text)}
+  .lat .v{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem;color:var(--cyan);white-space:nowrap}
+  .lat .v.gold{color:var(--gold)}
+  .demo-note{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.06em;margin-top:14px;line-height:1.7}
+
+  /* ============ NÚMEROS ============ */
+  .money-hero{text-align:center;padding:26px 0 10px}
+  .money-hero .amount{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:clamp(3rem,8vw,5.2rem);color:var(--gold);letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;
+  }
+  .money-hero .amount small{font-size:.28em;color:var(--muted);font-weight:500;letter-spacing:.05em}
+  .money-hero .sub{color:var(--muted);font-size:.9rem;margin-top:10px}
+  .vrows{margin-top:36px}
+  .vrow{display:grid;grid-template-columns:180px 1fr 120px;align-items:center;gap:16px;font-size:.83rem;margin-bottom:14px}
+  .vrow .l{color:var(--muted);line-height:1.4}
+  .vbar{height:26px;border-radius:6px;background:rgba(255,255,255,.05);overflow:hidden}
+  .vbar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#2A96A8,var(--cyan));transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+  .vrow.gold i{background:linear-gradient(90deg,#B98F45,var(--gold))}
+  .vnum{font-family:'Space Grotesk',sans-serif;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+  .vrow.gold .vnum{color:var(--gold)}
+  .calc-note{margin-top:22px;font-size:.72rem;color:var(--muted);line-height:1.7;max-width:720px}
+
+  /* ============ PRICING ============ */
+  .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:860px;margin:0 auto}
+  @media(max-width:760px){.price-grid{grid-template-columns:1fr}}
+  .pcard{background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;padding:30px;position:relative}
+  .pcard.founder{border-color:rgba(217,179,107,.55)}
+  .pcard .ribbon{position:absolute;top:-12px;left:26px;background:var(--gold);color:#141005;font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:5px 13px;border-radius:999px}
+  .pcard h3{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin-bottom:16px}
+  .prow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:13px 0;border-top:1px solid var(--line);font-size:.86rem}
+  .prow .k{color:var(--muted);line-height:1.45}
+  .prow .k small{display:block;font-size:.68rem;margin-top:2px}
+  .prow .strike{text-decoration:line-through;color:var(--muted);font-size:.76rem;margin-right:8px}
+  .prow .p{font-family:'Space Grotesk',sans-serif;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .pcard.founder .prow .p{color:var(--gold)}
+  .conds{margin-top:16px;font-size:.76rem;color:var(--muted);line-height:1.75}
+  .conds b{color:var(--text)}
+  .pay-args{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px;max-width:860px;margin-left:auto;margin-right:auto}
+  .parg{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;text-align:center;backdrop-filter:blur(10px)}
+  .parg .big{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.9rem;color:var(--cyan)}
+  .parg .big.gold{color:var(--gold)}
+  .parg .t{font-size:.76rem;color:var(--muted);margin-top:8px;line-height:1.55}
+  @media(max-width:660px){.pay-args{grid-template-columns:1fr}}
+
+  /* ============ CTA FINAL ============ */
+  .final{text-align:center}
+  .final h2{font-size:clamp(1.9rem,4.5vw,3rem);max-width:700px;margin:14px auto 0}
+  .final p{color:var(--muted);margin:18px auto 32px;max-width:480px;font-size:.93rem;line-height:1.65}
+
+  footer{border-top:1px solid var(--line);background:rgba(5,6,8,.7);backdrop-filter:blur(10px);padding:36px 0}
+  .foot{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+  .foot .f-note{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.06em;line-height:1.8;max-width:520px}
+  .foot a{color:var(--muted);text-decoration:none}
+  .foot a:hover{color:var(--cyan)}
+
+  /* reveal on scroll */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .rv.on{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .rv{opacity:1;transform:none}
+    .bg-video{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- VIDEO FIJO: el contenido desliza encima -->
+<video class="bg-video" autoplay muted loop playsinline preload="auto" id="bgv">
+  <source src="assets/hero-bg.mp4" type="video/mp4">
+</video>
+<div class="bg-overlay"></div>
+
+<nav>
+  <div class="nav-in">
+    <div class="logo">SELD<span>REN</span></div>
+    <div class="nav-links">
+      <a href="#problema">El problema</a>
+      <a href="#solucion">Sofía</a>
+      <a href="#demo">Demo</a>
+      <a href="#numeros">Números</a>
+      <a href="#precio">Precio</a>
+      <a class="btn small" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Probar la demo</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow rv">SELDREN · AI HEALTHCARE TECHNOLOGY</div>
+    <h1 class="rv">Tu clínica pierde pacientes<br>cada noche. <em>Sofía no duerme.</em></h1>
+    <p class="rv">Una recepcionista de IA que atiende el WhatsApp de tu clínica odontológica <b>24/7</b>, agenda directo en tu calendario, recuerda las citas y recupera a los pacientes que dejaron de venir. <b>Se paga sola con 2 citas al mes.</b></p>
+    <div class="hero-ctas rv">
+      <a class="btn" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">▶ Habla con Sofía ahora — la demo eres tú</a>
+      <a class="btn ghost" href="#numeros">Ver los números</a>
+    </div>
+
+    <div class="specs rv mono">
+      <div class="spec"><div class="k">Respuesta / texto</div><div class="v"><i>4–6</i> seg</div></div>
+      <div class="spec"><div class="k">Respuesta / nota de voz</div><div class="v"><i>7–9</i> seg</div></div>
+      <div class="spec"><div class="k">Disponibilidad</div><div class="v"><i>24/7</i> · 365</div></div>
+      <div class="spec"><div class="k">Implementación</div><div class="v"><i>72</i> horas</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ PROBLEMA ============ -->
+<section id="problema">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">01 · EL PROBLEMA</span>
+      <h2>Cinco fugas de plata que toda clínica tiene <em>y nadie mide</em>.</h2>
+      <p>El paciente colombiano cotiza por WhatsApp a 2-3 clínicas a la vez — y agenda con la primera que responde. <span class="tag-est">Cifras: estimados conservadores de industria</span></p>
+    </div>
+    <div class="fugas">
+      <div class="fuga rv"><span class="n">FUGA_01</span><span class="big">35–40<em>%</em></span><span class="t">de los mensajes llegan fuera de horario</span><p class="d">Noches, domingos y festivos. Hoy esos pacientes esperan hasta el otro día — o agendan con otra clínica.</p></div>
+      <div class="fuga rv"><span class="n">FUGA_02</span><span class="big">15–25<em>%</em></span><span class="t">de las citas se pierden por inasistencia</span><p class="d">Cada silla vacía cuesta igual: odontóloga, auxiliar y local corren aunque el paciente no llegue.</p></div>
+      <div class="fuga rv"><span class="n">FUGA_03</span><span class="big">2–3<em>h/día</em></span><span class="t">del personal quemadas en el chat</span><p class="d">Precios, horarios, dirección, "¿tienen cita?" — ~60 horas de nómina al mes en lo mismo, mientras el paciente presencial espera.</p></div>
+      <div class="fuga rv"><span class="n">FUGA_04</span><span class="big">30–50<em>%</em></span><span class="t">de tu base histórica está inactiva</span><p class="d">Pacientes con 6+ meses de silencio que nadie llama. Ya te conocen, ya confiaron una vez: es el ingreso más barato de recuperar.</p></div>
+      <div class="fuga rv"><span class="n">FUGA_05</span><span class="big">0<em>&nbsp;trazabilidad</em></span><span class="t">datos regados por todas partes</span><p class="d">La agenda en un cuaderno, los contactos en el celular. No sabes cuántos preguntaron, cuántos agendaron ni cuántos volvieron.</p></div>
+      <div class="fuga rv" style="border-color:rgba(111,214,232,.4)"><span class="n" style="color:var(--cyan)">LA_SALIDA</span><span class="big" style="color:var(--cyan)">1<em>&nbsp;sistema</em></span><span class="t">Las cinco fugas, cerradas a la vez</span><p class="d">Un empleado digital configurado a la medida de tu clínica, con un técnico responsable detrás.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOLUCIÓN ============ -->
+<section id="solucion">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">02 · LA SOLUCIÓN</span>
+      <h2>Una sola herramienta. <em>Cuatro módulos</em> conectados.</h2>
+      <p>WhatsApp + Google Calendar + CRM, sincronizados sin intervención humana. Sofía habla como tu clínica, con tus precios y tus horarios.</p>
+    </div>
+    <div class="mods">
+      <div class="mod rv"><span class="wf">WF_01</span><div class="name">Recepcionista 24/7</div><div class="freq">TIEMPO_REAL</div><p class="d">Responde texto y audio en segundos, califica al paciente y agenda, reprograma o cancela solo en horarios reales de la clínica.</p></div>
+      <div class="mod rv"><span class="wf">WF_02</span><div class="name">Recordatorios</div><div class="freq">CADA_30_MIN</div><p class="d">Mensaje automático 24 h y 2 h antes de cada cita, con confirmación del paciente. Adiós sillas vacías.</p></div>
+      <div class="mod rv"><span class="wf">WF_03</span><div class="name">Reactivación</div><div class="freq">PROGRAMABLE</div><p class="d">Detecta pacientes inactivos y les escribe un mensaje personalizado por IA: su nombre, cuánto llevan sin venir y lo que les interesaba.</p></div>
+      <div class="mod rv"><span class="wf">WF_04</span><div class="name">Sincronizador CRM</div><div class="freq">CADA_15_MIN</div><p class="d">Calendario y base de datos siempre coinciden; migra leads a pacientes y marca citas sospechosas para revisión.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEMO ============ -->
+<section id="demo">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">03 · DEMO REAL — SIN LIBRETO</span>
+      <h2>Esto no es una promesa. <em>Ya funciona.</em></h2>
+      <p>Grabación real del sistema en operación, medida frame a frame. <span class="tag-dato">Dato medido · 6 jul 2026</span></p>
+    </div>
+    <div class="demo-grid">
+      <div class="rv">
+        <video class="demo-video" controls playsinline preload="metadata" poster="">
+          <source src="assets/demo.mp4" type="video/mp4">
+          Tu navegador no soporta video.
+        </video>
+      </div>
+      <div class="panel rv">
+        <div class="lat-rows">
+          <div class="lat"><span class="l"><b>"Hola, buenas tardes"</b> → saludo personalizado de Sofía</span><span class="v">4 seg</span></div>
+          <div class="lat"><span class="l"><b>Pregunta por blanqueamiento</b> → precio e info exacta</span><span class="v">5 seg</span></div>
+          <div class="lat"><span class="l"><b>Nota de voz</b> 🎤 → la transcribe, entiende y responde</span><span class="v">8 seg</span></div>
+          <div class="lat"><span class="l"><b>De "hola" a cita agendada</b> en Google Calendar</span><span class="v gold">~3 min</span></div>
+          <div class="lat" style="border-bottom:none"><span class="l"><b>Clínica promedio</b> respondiendo a mano</span><span class="v" style="color:var(--red)">1–4 h</span></div>
+        </div>
+        <p class="demo-note">// LATENCIAS MEDIDAS SOBRE GRABACIÓN DE PANTALLA REAL.<br>// LA CITA QUEDA EN CALENDAR Y EL REGISTRO EN EL CRM. AUTOMÁTICO.</p>
+        <a class="btn" style="margin-top:20px" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Pruébalo tú mismo, ahora →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NÚMEROS ============ -->
+<section id="numeros">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">04 · EL VALOR, PESO POR PESO</span>
+      <h2>Lo que Sofía le deja a una clínica pequeña, <em>cada mes</em>.</h2>
+      <p>Escenario conservador: 80-100 conversaciones/mes, ~60 citas/mes, ticket promedio $180.000 COP. <span class="tag-est">Estimado conservador — el piloto lo mide con TUS datos</span></p>
+    </div>
+    <div class="panel rv">
+      <div class="money-hero">
+        <div class="amount">$<span id="money" data-t="3535000">0</span> <small>COP/MES</small></div>
+        <div class="sub">+17 citas al mes que hoy se están perdiendo · 50 horas de trabajo repetitivo eliminadas</div>
+      </div>
+      <div class="vrows">
+        <div class="vrow"><span class="l">Leads recuperados 24/7<br><span class="mono" style="font-size:.62rem">10 citas × $180.000</span></span><div class="vbar"><i data-w="100"></i></div><span class="vnum">$1.800.000</span></div>
+        <div class="vrow"><span class="l">Inasistencias evitadas<br><span class="mono" style="font-size:.62rem">5 citas × $180.000</span></span><div class="vbar"><i data-w="50"></i></div><span class="vnum">$900.000</span></div>
+        <div class="vrow"><span class="l">Pacientes reactivados<br><span class="mono" style="font-size:.62rem">2 citas × $180.000</span></span><div class="vbar"><i data-w="20"></i></div><span class="vnum">$360.000</span></div>
+        <div class="vrow gold"><span class="l">Horas de auxiliar liberadas<br><span class="mono" style="font-size:.62rem">~50 h × $9.500/h</span></span><div class="vbar"><i data-w="26"></i></div><span class="vnum">$475.000</span></div>
+      </div>
+      <p class="calc-note">Ticket promedio conservador de la lista de precios real del sistema (valoración gratuita como gancho · control de ortodoncia $80.000 · profilaxis $150.000 · resinas $180.000 · blanqueamiento $450.000 · prótesis $600.000 · carillas $800.000). Un solo paciente de carillas recuperado paga más de dos mensualidades. Escenario medio en ciudad: <b style="color:var(--text)">$6–8 millones COP/mes</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRECIO ============ -->
+<section id="precio">
+  <div class="wrap">
+    <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+      <span class="eyebrow">05 · PROPUESTA PILOTO</span>
+      <h2>No me creas a mí. <em>Midámoslo en tu clínica.</em></h2>
+      <p>3 meses a precio de fundador. El panel de resultados con tus números reales decide si seguimos.</p>
+    </div>
+    <div class="price-grid">
+      <div class="pcard rv">
+        <h3>Precio normal</h3>
+        <div class="prow"><span class="k">Implementación<small>diagnóstico + personalización + despliegue 72 h + capacitación</small></span><span class="p">$1.250.000</span></div>
+        <div class="prow"><span class="k">Mensualidad<small>operación, soporte, mejoras · hasta 500 conversaciones/mes</small></span><span class="p">$450.000/mes</span></div>
+      </div>
+      <div class="pcard founder rv">
+        <span class="ribbon">FUNDADOR · SOLO 3 CUPOS</span>
+        <h3>Precio piloto</h3>
+        <div class="prow"><span class="k">Implementación</span><span><span class="strike">$1.250.000</span><span class="p">$890.000</span></span></div>
+        <div class="prow"><span class="k">Mensualidad</span><span><span class="strike">$450.000</span><span class="p">$290.000/mes</span></span></div>
+        <p class="conds"><b>Condiciones ganar-ganar:</b> compromiso mínimo de 3 meses · autorización para usar métricas y testimonio como caso de éxito · <b>precio congelado de por vida</b> mientras seas cliente.</p>
+        <a class="btn" style="margin-top:18px;width:100%;justify-content:center" href="https://wa.me/573138948522?text=Hola%2C%20me%20interesa%20el%20cupo%20de%20fundador%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Reservar cupo fundador</a>
+      </div>
+    </div>
+    <div class="pay-args">
+      <div class="parg rv"><div class="big gold">~12×</div><div class="t">El sistema genera ~$3.5M/mes y cuesta $290.000. Se paga con 2 citas — el resto es ganancia tuya.</div></div>
+      <div class="parg rv"><div class="big">$1.4M+</div><div class="t">costaría una recepcionista nocturna y de festivos — y no contesta en 4 segundos ni escribe 40 reactivaciones personalizadas.</div></div>
+      <div class="parg rv"><div class="big" style="font-size:1.25rem;padding-top:8px">Técnico detrás</div><div class="t">Implementación a la medida, con soporte directo del especialista que construyó la infraestructura.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA FINAL ============ -->
+<section class="final">
+  <div class="wrap">
+    <span class="eyebrow rv">06 · EL SIGUIENTE PASO</span>
+    <h2 class="rv">La demo no es un video.<br><em>Es hablarle a Sofía.</em></h2>
+    <p class="rv">Escríbele ahora mismo. Te va a responder en segundos, a cualquier hora — exactamente como respondería a tus pacientes.</p>
+    <a class="btn rv" style="font-size:1rem;padding:16px 30px" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">▶ Escribirle a Sofía por WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot">
+    <div>
+      <div class="logo">SELD<span>REN</span></div>
+      <p class="f-note" style="margin-top:10px">AI HEALTHCARE TECHNOLOGY<br>CHITAGÁ, NORTE DE SANTANDER · COLOMBIA<br><a href="mailto:rivasandrey16@gmail.com">RIVASANDREY16@GMAIL.COM</a> · <a href="https://wa.me/573138948522">+57 313 894 8522</a></p>
+    </div>
+    <p class="f-note">CIFRAS DE SISTEMA (LATENCIAS, PRECIOS, CAPACIDADES) MEDIDAS SOBRE LA OPERACIÓN REAL. CIFRAS DE INDUSTRIA MARCADAS COMO ESTIMADOS CONSERVADORES — EL PILOTO LAS REEMPLAZA CON LOS DATOS DE TU CLÍNICA.</p>
+  </div>
+</footer>
+
+<script>
+  // ---- contador de dinero ----
+  const fmt = n => n.toLocaleString('es-CO');
+  function countUp(el, target, dur){
+    const start = performance.now();
+    (function tick(now){
+      const p = Math.min((now - start) / dur, 1);
+      el.textContent = fmt(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  }
+
+  // ---- reveal on scroll + disparadores ----
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('on');
+      if (e.target.querySelector && e.target.id === '') {}
+      io.unobserve(e.target);
+    });
+  }, {threshold:.18});
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  // dinero + barras cuando la sección de números entra en pantalla
+  const numSec = document.getElementById('numeros');
+  const io2 = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      countUp(document.getElementById('money'), 3535000, 1700);
+      numSec.querySelectorAll('.vbar i').forEach(b => setTimeout(() => b.style.width = b.dataset.w + '%', 250));
+      io2.disconnect();
+    });
+  }, {threshold:.3});
+  io2.observe(numSec);
+
+  // ---- ping-pong loop del video de fondo (va y vuelve, sin corte) ----
+  const bgv = document.getElementById('bgv');
+  const PINGPONG = true; // ponlo en false si prefieres loop normal
+  if (PINGPONG && bgv) {
+    bgv.removeAttribute('loop');
+    let dir = 1, raf;
+    bgv.addEventListener('loadedmetadata', () => {
+      const step = () => {
+        if (dir === -1) {
+          bgv.currentTime = Math.max(0, bgv.currentTime - 1/30);
+          if (bgv.currentTime <= 0.05) { dir = 1; bgv.play(); return; }
+          raf = requestAnimationFrame(step);
+        }
+      };
+      bgv.addEventListener('ended', () => { dir = -1; bgv.pause(); raf = requestAnimationFrame(step); });
+    });
+  }
+</script>
+</body>
+</html>
