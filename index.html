@@ -440,16 +440,17 @@
   if (PINGPONG && bgv) {
     bgv.removeAttribute('loop');
     let dir = 1, raf;
-    bgv.addEventListener('loadedmetadata', () => {
-      const step = () => {
-        if (dir === -1) {
-          bgv.currentTime = Math.max(0, bgv.currentTime - 1/30);
-          if (bgv.currentTime <= 0.05) { dir = 1; bgv.play(); return; }
-          raf = requestAnimationFrame(step);
-        }
-      };
-      bgv.addEventListener('ended', () => { dir = -1; bgv.pause(); raf = requestAnimationFrame(step); });
-    });
+    const step = () => {
+      if (dir === -1) {
+        bgv.currentTime = Math.max(0, bgv.currentTime - 1/30);
+        if (bgv.currentTime <= 0.05) { dir = 1; bgv.play(); return; }
+        raf = requestAnimationFrame(step);
+      }
+    };
+    // el listener va directo (no dentro de loadedmetadata): si el video carga
+    // antes de que corra este script, loadedmetadata ya disparó y nunca se engancharía
+    bgv.addEventListener('ended', () => { dir = -1; bgv.pause(); raf = requestAnimationFrame(step); });
+    if (bgv.ended) { dir = -1; raf = requestAnimationFrame(step); }
   }
 </script>
 </body>
