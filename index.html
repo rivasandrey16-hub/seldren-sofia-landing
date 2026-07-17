@@ -14,11 +14,13 @@
     --panel:rgba(10,13,17,.78);
     --panel-solid:#0B0E12;
     --line:rgba(120,140,160,.16);
-    --text:#EDEFF2;
-    --muted:#98A2AE;
-    --cyan:#6FD6E8;       /* acento Seldren AI */
+    --text:#F1F3F6;
+    --muted:#9AA6B2;
+    --cyan:#2CC4DC;       /* acento Seldren AI — teal profundo y luminoso */
+    --cyan-glow:rgba(44,196,220,.5);
     --teal:#3FC1B0;
-    --gold:#D9B36B;       /* dinero */
+    --gold:#D2A24A;       /* dinero — oro profundo */
+    --gold-glow:rgba(210,162,74,.42);
     --red:#E06C6C;
     --wa:#25D366;
   }
@@ -34,13 +36,15 @@
   .bg-video{
     position:fixed;inset:0;z-index:-2;
     width:100vw;height:100vh;object-fit:cover;
-    filter:brightness(.85);
+    filter:brightness(.40) saturate(1.06) contrast(1.03);
   }
   .bg-overlay{
     position:fixed;inset:0;z-index:-1;
     background:
-      radial-gradient(ellipse at 50% 0%, rgba(111,214,232,.06), transparent 55%),
-      linear-gradient(180deg, rgba(5,6,8,.55) 0%, rgba(5,6,8,.35) 40%, rgba(5,6,8,.62) 100%);
+      radial-gradient(120% 90% at 72% 18%, rgba(44,196,220,.10), transparent 55%),
+      radial-gradient(90% 80% at 18% 88%, rgba(210,162,74,.07), transparent 60%),
+      linear-gradient(180deg, rgba(5,6,8,.82) 0%, rgba(5,6,8,.60) 38%, rgba(5,6,8,.72) 72%, rgba(5,6,8,.93) 100%),
+      radial-gradient(140% 120% at 50% 38%, transparent 42%, rgba(0,0,0,.55) 100%);
   }
 
   /* ============ TIPOGRAFÍA BASE ============ */
@@ -48,6 +52,7 @@
   .eyebrow{
     font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:500;
     letter-spacing:.28em;text-transform:uppercase;color:var(--cyan);
+    text-shadow:0 0 18px var(--cyan-glow),0 1px 8px rgba(0,0,0,.5);
   }
   h1,h2{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:.015em;text-transform:uppercase}
   h2 em{font-style:normal;color:var(--gold)}
@@ -58,7 +63,7 @@
   /* ============ NAVBAR ============ */
   nav{
     position:fixed;top:0;left:0;right:0;z-index:100;
-    backdrop-filter:blur(12px);background:rgba(5,6,8,.6);
+    backdrop-filter:blur(14px) saturate(1.1);background:rgba(6,8,11,.72);
     border-bottom:1px solid var(--line);
   }
   .nav-in{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px}
@@ -68,16 +73,26 @@
   .nav-links a{color:var(--muted);text-decoration:none;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;transition:color .2s}
   .nav-links a:hover{color:var(--text)}
   .btn{
-    display:inline-flex;align-items:center;gap:9px;
-    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.85rem;
-    color:#04110B;background:var(--wa);border:none;border-radius:10px;
-    padding:11px 20px;text-decoration:none;cursor:pointer;
-    transition:transform .18s, box-shadow .18s;
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.9rem;letter-spacing:.01em;
+    color:#04130A;
+    background:linear-gradient(180deg,#2EE070 0%,#1FB457 100%);
+    border:1px solid rgba(255,255,255,.16);border-radius:13px;
+    padding:13px 22px;text-decoration:none;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:0 1px 0 rgba(255,255,255,.38) inset, 0 8px 22px rgba(20,170,85,.30), 0 1px 2px rgba(0,0,0,.35);
+    transition:transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .2s, filter .2s;
   }
-  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.3)}
-  .btn.small{padding:9px 16px;font-size:.78rem}
-  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
-  .btn.ghost:hover{border-color:var(--cyan);box-shadow:none;color:var(--cyan)}
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.04);box-shadow:0 1px 0 rgba(255,255,255,.45) inset,0 14px 34px rgba(20,170,85,.42),0 2px 4px rgba(0,0,0,.35)}
+  .btn:active{transform:translateY(0) scale(.985);box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 5px 14px rgba(20,170,85,.32)}
+  .btn.small{padding:10px 17px;font-size:.8rem;border-radius:11px}
+  .btn.ghost{
+    background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
+    color:var(--text);border:1px solid rgba(180,200,215,.22);backdrop-filter:blur(8px);
+    box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 6px 18px rgba(0,0,0,.28);
+  }
+  .btn.ghost:hover{transform:translateY(-2px);filter:none;border-color:var(--cyan);color:var(--cyan);box-shadow:0 1px 0 rgba(255,255,255,.1) inset,0 10px 26px rgba(0,0,0,.32),0 0 0 1px rgba(44,196,220,.28)}
+  .btn.ghost:active{transform:translateY(0) scale(.985)}
   @media(max-width:760px){.nav-links a:not(.btn){display:none}}
 
   /* ============ HERO ============ */
@@ -85,17 +100,21 @@
   .hero .eyebrow{margin-bottom:20px}
   .hero h1{
     font-size:clamp(1.9rem,5.2vw,3.5rem);line-height:1.12;max-width:900px;
+    text-shadow:0 2px 34px rgba(0,0,0,.62),0 1px 3px rgba(0,0,0,.55);
   }
-  .hero h1 em{font-style:normal;color:var(--cyan)}
+  .hero h1 em{font-style:normal;color:var(--cyan);text-shadow:0 0 28px var(--cyan-glow)}
   .hero p{
-    margin-top:24px;font-size:1.02rem;color:var(--muted);max-width:560px;line-height:1.65;
+    margin-top:24px;font-size:1.02rem;color:#C4CCD6;max-width:560px;line-height:1.65;
+    text-shadow:0 1px 14px rgba(0,0,0,.55);
   }
   .hero p b{color:var(--text)}
   .hero-ctas{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
 
   /* franja de specs técnicas — tipografía de la referencia */
   .specs{
-    margin-top:76px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    margin-top:76px;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    background:rgba(9,12,16,.40);backdrop-filter:blur(10px);
+    box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 18px 50px rgba(0,0,0,.35);
     display:grid;grid-template-columns:repeat(4,1fr);
   }
   .spec{padding:20px 18px;border-right:1px solid var(--line)}
@@ -111,8 +130,8 @@
     border:1px solid var(--line);border-radius:18px;padding:32px;
   }
   .sec-head{margin-bottom:44px;max-width:640px}
-  .sec-head h2{font-size:clamp(1.35rem,3vw,2.05rem);line-height:1.18;margin-top:14px;color:var(--cyan)}
-  .sec-head p{margin-top:14px;color:var(--muted);font-size:.93rem;line-height:1.65}
+  .sec-head h2{font-size:clamp(1.35rem,3vw,2.05rem);line-height:1.18;margin-top:14px;color:var(--cyan);text-shadow:0 2px 26px rgba(0,0,0,.5)}
+  .sec-head p{margin-top:14px;color:#B8C2CD;font-size:.93rem;line-height:1.65;text-shadow:0 1px 10px rgba(0,0,0,.4)}
 
   .tag-est{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
   .tag-dato{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:#04110B;background:var(--cyan);border-radius:999px;padding:3px 10px;font-weight:600}
@@ -212,11 +231,16 @@
   /* ============ BOTÓN FLOTANTE WHATSAPP (solo móvil) ============ */
   .wa-fab{
     display:none;position:fixed;bottom:18px;right:18px;z-index:95;
-    width:56px;height:56px;border-radius:50%;background:var(--wa);
+    width:58px;height:58px;border-radius:50%;
+    background:linear-gradient(180deg,#2EE070,#1FB457);
+    border:1px solid rgba(255,255,255,.2);
     align-items:center;justify-content:center;
-    box-shadow:0 6px 22px rgba(37,211,102,.45);
+    box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 10px 26px rgba(20,170,85,.5),0 2px 6px rgba(0,0,0,.4);
+    transition:transform .2s cubic-bezier(.2,.7,.2,1);
   }
-  .wa-fab svg{width:30px;height:30px;fill:#04110B}
+  .wa-fab:hover{transform:scale(1.06)}
+  .wa-fab:active{transform:scale(.95)}
+  .wa-fab svg{width:30px;height:30px;fill:#04130A}
   @media(max-width:760px){.wa-fab{display:flex}}
 
   /* ============ AJUSTES MÓVIL ============ */
@@ -275,7 +299,7 @@
       <a href="#demo">Demo</a>
       <a href="#numeros">Números</a>
       <a href="#precio">Precio</a>
-      <a class="btn small" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Probar la demo</a>
+      <a class="btn small" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Escribir a Sofía</a>
     </div>
   </div>
 </nav>
@@ -287,8 +311,8 @@
     <h1 class="rv">Tu clínica pierde pacientes<br>cada noche. <em>Sofía no duerme.</em></h1>
     <p class="rv">Una recepcionista de IA que atiende el WhatsApp de tu clínica odontológica <b>24/7</b>, agenda directo en tu calendario, recuerda las citas y recupera a los pacientes que dejaron de venir. <b>Se paga sola con 2 citas al mes.</b></p>
     <div class="hero-ctas rv">
-      <a class="btn" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">▶ Habla con Sofía ahora — la demo eres tú</a>
-      <a class="btn ghost" href="#numeros">Ver los números</a>
+      <a class="btn" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Escríbele a Sofía por WhatsApp →</a>
+      <a class="btn ghost" href="#numeros">Ver cuánto recupera tu clínica</a>
     </div>
 
     <div class="specs rv mono">
@@ -360,7 +384,7 @@
           <div class="lat" style="border-bottom:none"><span class="l"><b>Clínica promedio</b> respondiendo a mano</span><span class="v" style="color:var(--red)">1–4 h</span></div>
         </div>
         <p class="demo-note">// LATENCIAS MEDIDAS SOBRE GRABACIÓN DE PANTALLA REAL.<br>// LA CITA QUEDA EN CALENDAR Y EL REGISTRO EN EL CRM. AUTOMÁTICO.</p>
-        <a class="btn" style="margin-top:20px" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Pruébalo tú mismo, ahora →</a>
+        <a class="btn" style="margin-top:20px" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Escríbele a Sofía y compruébalo →</a>
       </div>
     </div>
   </div>
@@ -428,7 +452,7 @@
     <span class="eyebrow rv">06 · EL SIGUIENTE PASO</span>
     <h2 class="rv">La demo no es un video.<br><em>Es hablarle a Sofía.</em></h2>
     <p class="rv">Escríbele ahora mismo. Te va a responder en segundos, a cualquier hora — exactamente como respondería a tus pacientes.</p>
-    <a class="btn rv" style="font-size:1rem;padding:16px 30px" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">▶ Escribirle a Sofía por WhatsApp</a>
+    <a class="btn rv" style="font-size:1rem;padding:16px 30px" href="https://wa.me/573138948522?text=Hola%2C%20quiero%20probar%20la%20demo%20de%20Sof%C3%ADa%20para%20mi%20cl%C3%ADnica" target="_blank" rel="noopener">Escríbele a Sofía por WhatsApp →</a>
   </div>
 </section>
 
