@@ -37,7 +37,8 @@
     position:fixed;inset:0;z-index:-2;
     width:100vw;height:100vh;object-fit:cover;
     transform:scale(.96);transform-origin:center;
-    filter:brightness(.60) saturate(1.05) contrast(1.02);
+    /* el oscurecimiento va horneado en el propio archivo (sin filter CSS,
+       que lagueaba el video a pantalla completa en móvil) */
   }
   .bg-overlay{
     position:fixed;inset:0;z-index:-1;
